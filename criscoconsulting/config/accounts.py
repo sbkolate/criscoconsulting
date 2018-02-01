@@ -17,6 +17,16 @@ def get_data():
 					"name": "Entry Of Payment",
 					"description": _("Entry Of Payment"),
 				},
+				{
+					"type": "doctype",
+					"name": "Bank Entry",
+					"description": _("Entry of Bank"),
+				},
+				{
+					"type": "doctype",
+					"name": "Cash Entry",
+					"description": _("Entry Of Cash"),
+				},
 			]
 		},
 	]
