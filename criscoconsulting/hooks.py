@@ -13,6 +13,7 @@ app_license = "MIT"
 
 # Includes in <head>
 # ------------------
+fixtures = ['Custom Field', 'Property Setter', "Custom Script","Print Format"]
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/criscoconsulting/css/criscoconsulting.css"
