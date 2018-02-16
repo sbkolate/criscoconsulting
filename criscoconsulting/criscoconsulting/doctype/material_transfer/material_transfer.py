@@ -60,6 +60,16 @@ class MaterialTransfer(StockController):
 		self.calculate_rate_and_amount(update_finished_item_rate=False)
 
 	def on_submit(self):
+
+		if self.material_transfer_type == "Send":
+			if self.mt_status=="":
+				self.mt_status = "In Transit"
+
+		if self.material_transfer_type == "Receive":
+			if self.reference_of_send_entry:
+				frappe.db.set_value("Material Transfer", self.reference_of_send_entry, "mt_status","Received")
+				self.mt_status = "In Transit"
+
 		self.update_stock_ledger()
 
 		from erpnext.stock.doctype.serial_no.serial_no import update_serial_nos_after_submit
@@ -72,6 +82,10 @@ class MaterialTransfer(StockController):
 		self.update_stock_ledger()
 		self.update_production_order()
 		self.make_gl_entries_on_cancel()
+		if self.material_transfer_type == "Receive":
+			if self.reference_of_send_entry:
+				frappe.db.set_value("Material Transfer", self.reference_of_send_entry, "mt_status","Rejected")
+				self.mt_status = ""
 
 	def validate_purpose(self):
 		valid_purposes = ["Material Issue", "Material Receipt", "Material Transfer", "Material Transfer for Manufacture",
