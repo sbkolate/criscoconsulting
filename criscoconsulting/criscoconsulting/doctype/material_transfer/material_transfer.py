@@ -911,6 +911,7 @@ def make_stock_entry_custom(source_name, target_doc=None):
 
 	def set_missing_values(source, target):
 		target.purpose = source.material_request_type
+		target.to_warehouse = source.warehouse
 		target.run_method("calculate_rate_and_amount")
 
 	doclist = get_mapped_doc("Material Request", source_name, {
