@@ -14,6 +14,8 @@ from erpnext.stock.get_item_details import get_bin_details, get_default_cost_cen
 from erpnext.stock.doctype.batch.batch import get_batch_no, set_batch_nos
 from erpnext.manufacturing.doctype.bom.bom import validate_bom_no
 import json
+from frappe.model.mapper import get_mapped_doc
+
 
 class IncorrectValuationRateError(frappe.ValidationError): pass
 class DuplicateEntryForProductionOrderError(frappe.ValidationError): pass
@@ -805,10 +807,10 @@ class MaterialTransfer(StockController):
 				mreq_item = frappe.db.get_value("Material Request Item",
 					{"name": item.material_request_item, "parent": item.material_request},
 					["item_code", "warehouse", "idx"], as_dict=True)
-				if mreq_item.item_code != item.item_code or \
-				mreq_item.warehouse != (item.s_warehouse if self.purpose== "Material Issue" else item.t_warehouse):
-					frappe.throw(_("Item or Warehouse for row {0} does not match Material Request").format(item.idx),
-						frappe.MappingMismatchError)
+				#if mreq_item.item_code != item.item_code or \
+				#mreq_item.warehouse != (item.s_warehouse if self.purpose== "Material Issue" else item.t_warehouse):
+					#frappe.throw(_("Item or Warehouse for row {0} does not match Material Request").format(item.idx),
+					#	frappe.MappingMismatchError)
 
 	def validate_batch(self):
 		if self.purpose in ["Material Transfer for Manufacture", "Manufacture", "Repack", "Subcontract"]:
@@ -891,6 +893,48 @@ def get_uom_details(item_code, uom, qty):
 			'transfer_qty'			: flt(qty) * flt(conversion_factor)
 		}
 	return ret
+
+
+@frappe.whitelist()
+def make_stock_entry_custom(source_name, target_doc=None):
+	def update_item(obj, target, source_parent):
+		qty = flt(obj.qty) - flt(obj.ordered_qty) \
+			if flt(obj.qty) > flt(obj.ordered_qty) else 0
+		target.qty = qty
+		target.transfer_qty = qty
+		target.conversion_factor = 1
+
+		if source_parent.material_request_type == "Material Transfer":
+			target.t_warehouse = obj.warehouse
+		else:
+			target.s_warehouse = obj.warehouse
+
+	def set_missing_values(source, target):
+		target.purpose = source.material_request_type
+		target.run_method("calculate_rate_and_amount")
+
+	doclist = get_mapped_doc("Material Request", source_name, {
+		"Material Request": {
+			"doctype": "Material Transfer",
+			"validation": {
+				"docstatus": ["=", 1],
+				"material_request_type": ["in", ["Material Transfer", "Material Issue"]]
+			}
+		},
+		"Material Request Item": {
+			"doctype": "Stock Entry Detail",
+			"field_map": {
+				"name": "material_request_item",
+				"parent": "material_request",
+				"uom": "stock_uom",
+			},
+			"postprocess": update_item,
+			"condition": lambda doc: doc.ordered_qty < doc.qty
+		}
+	}, target_doc, set_missing_values)
+
+	return doclist
+
 
 @frappe.whitelist()
 def get_warehouse_details(args):
