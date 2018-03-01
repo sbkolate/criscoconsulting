@@ -28,6 +28,7 @@ form_grid_templates = {
 }
 
 class MaterialTransfer(StockController):
+
 	def get_feed(self):
 		return _("From {0} to {1}").format(self.from_warehouse, self.to_warehouse)
 
@@ -901,17 +902,24 @@ def make_stock_entry_custom(source_name, target_doc=None):
 		qty = flt(obj.qty) - flt(obj.ordered_qty) \
 			if flt(obj.qty) > flt(obj.ordered_qty) else 0
 		target.qty = qty
+		target.basic_rate = obj.rate
 		target.transfer_qty = qty
 		target.conversion_factor = 1
 
 		if source_parent.material_request_type == "Material Transfer":
 			target.t_warehouse = obj.warehouse
+			# target.from_warehouse = obj.warehouse
+			# frappe.msgprint(target.t_warehouse)
+			warehouse_name=obj.warehouse
 		else:
 			target.s_warehouse = obj.warehouse
+			# target.from_warehouse=target.s_warehouse
+			# frappe.msgprint(target.s_warehouse)
 
 	def set_missing_values(source, target):
 		target.purpose = source.material_request_type
-		target.to_warehouse = source.warehouse
+		#target.from_warehouse = target.t_warehouse
+		target.from_warehouse = source.from_warehouse
 		target.run_method("calculate_rate_and_amount")
 
 	doclist = get_mapped_doc("Material Request", source_name, {
