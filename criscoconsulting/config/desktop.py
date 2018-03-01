@@ -7,8 +7,8 @@ def get_data():
 		{
 			"module_name": "criscoconsulting",
 			"color": "grey",
-			"icon": "octicon octicon-file-directory",
+			"icon": "fa fa-life-ring",
 			"type": "module",
-			"label": _("criscoconsulting")
+			"label": _("KSATB")
 		}
 	]
