@@ -908,18 +908,17 @@ def make_stock_entry_custom(source_name, target_doc=None):
 
 		if source_parent.material_request_type == "Material Transfer":
 			target.t_warehouse = obj.warehouse
-			# target.from_warehouse = obj.warehouse
-			# frappe.msgprint(target.t_warehouse)
+
+			#target.s_warehouse = obj.warehouse
+			target.cost_center = obj.cost_center
 			warehouse_name=obj.warehouse
 		else:
 			target.s_warehouse = obj.warehouse
-			# target.from_warehouse=target.s_warehouse
-			# frappe.msgprint(target.s_warehouse)
 
 	def set_missing_values(source, target):
 		target.purpose = source.material_request_type
-		#target.from_warehouse = target.t_warehouse
 		target.from_warehouse = source.from_warehouse
+		target.cost_center = "Test"
 		target.run_method("calculate_rate_and_amount")
 
 	doclist = get_mapped_doc("Material Request", source_name, {
