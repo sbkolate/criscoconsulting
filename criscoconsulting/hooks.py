@@ -25,7 +25,17 @@ fixtures = ['Custom Field', 'Property Setter', "Custom Script","Print Format"]
 
 # include js in page
 # page_js = {"page" : "public/js/file.js"}
-
+doctype_js = {
+    "Customer":["custom_script/customer.js"],
+    "Delivery Note":["custom_script/delivery_note.js"],
+    "Material Request":["custom_script/material_request.js"],
+    "Material Transfer":["custom_script/material_transfer.js"],
+    "Purchase Invoice":["custom_script/purchase_invoice.js"],
+    "Purchase Order":["custom_script/purchase_order.js"],
+    "Purchase Receipt":["custom_script/purchase_receipt.js"],
+    "Sales Invoice":["custom_script/sales_invoice.js"],
+    "Sales Order":["custom_script/sales_order.js"]
+}
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
@@ -80,13 +90,12 @@ fixtures = ['Custom Field', 'Property Setter', "Custom Script","Print Format"]
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-#	}
-# }
+doc_events = {
+	"Material Request": {
+		"validate": "criscoconsulting.custom_method.material_request_data"
+		
+	}
+}
 
 # Scheduled Tasks
 # ---------------

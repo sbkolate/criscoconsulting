@@ -66,6 +66,10 @@ frappe.ui.form.on('Material Transfer', {
 						mr_item.warehouse = item.s_warehouse;
 						mr_item.required_date = frappe.datetime.nowdate();
 					});
+					var material_request = frm.get_field('material_request');
+					mr.material_request = frm.doc.material_request;
+					var receiver = frm.get_field('receiver');
+					mr.receiver = frm.doc.receiver;
 					frappe.set_route('Form', 'Material Request', mr.name);
 				});
 			});
