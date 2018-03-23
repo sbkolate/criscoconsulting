@@ -66,7 +66,11 @@ class MaterialTransfer(StockController):
 		if self.cost_center:
 			self.material_transfer_series	= frappe.db.get_value("Cost Center", 'Jeddah - SAM', "material_transfer_series")
 
-	# def before_insert(self):
+		if self.cost_center:
+			self.material_transfer_series	= frappe.db.get_value("Cost Center", 'Jeddah - SAM', "material_transfer_series")
+
+
+	def before_insert(self):
 		# frappe.msgprint("hi")
 		if self.cost_center:
 			self.material_transfer_series	= frappe.db.get_value("Cost Center", 'Jeddah - SAM', "material_transfer_series")
