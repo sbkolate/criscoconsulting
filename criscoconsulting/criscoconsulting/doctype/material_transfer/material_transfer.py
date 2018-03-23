@@ -898,7 +898,6 @@ def get_uom_details(item_code, uom, qty):
 
 @frappe.whitelist()
 def make_stock_entry_custom(source_name, target_doc=None):
-	frappe.msgprint("TEST")
 	def update_item(obj, target, source_parent):
 		qty = flt(obj.qty) - flt(obj.ordered_qty) \
 			if flt(obj.qty) > flt(obj.ordered_qty) else 0
@@ -918,10 +917,9 @@ def make_stock_entry_custom(source_name, target_doc=None):
 
 	def set_missing_values(source, target):
 		target.purpose = source.material_request_type
-		target.from_warehouse = source.from_warehouse
+		target.from_warehouse = source.for_warehouse
+		target.receiver_warehouse = source.target_warehouse
 		target.receiver = source.receiver
-		#target.doc_details = "Test"
-		#target.cost_center = "Test"
 		target.run_method("calculate_rate_and_amount")
 
 	doclist = get_mapped_doc("Material Request", source_name, {
