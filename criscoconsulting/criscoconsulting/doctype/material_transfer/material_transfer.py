@@ -28,7 +28,8 @@ form_grid_templates = {
 }
 
 class MaterialTransfer(StockController):
-
+	def test(self):
+		pass
 	def get_feed(self):
 		return _("From {0} to {1}").format(self.from_warehouse, self.to_warehouse)
 
