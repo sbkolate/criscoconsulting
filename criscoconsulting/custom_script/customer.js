@@ -3,7 +3,7 @@ frappe.ui.form.on("Customer", "refresh", function(frm) {cur_frm.fields_dict['cus
             filters: {
                 'is_group': 0
            }
-		
+		console.log("test");
         }
     };
 });

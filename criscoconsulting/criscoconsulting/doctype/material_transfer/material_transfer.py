@@ -28,7 +28,8 @@ form_grid_templates = {
 }
 
 class MaterialTransfer(StockController):
-
+	def test(self):
+		pass
 	def get_feed(self):
 		return _("From {0} to {1}").format(self.from_warehouse, self.to_warehouse)
 
@@ -966,4 +967,4 @@ def get_warehouse_details(args):
 	return ret
 @frappe.whitelist()
 def make_material_request_custom(source_name, target_doc=None):
-	frappe.msgprint("test")
+	pass
