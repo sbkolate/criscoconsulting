@@ -63,6 +63,14 @@ class MaterialTransfer(StockController):
 		self.set_actual_qty()
 		self.calculate_rate_and_amount(update_finished_item_rate=False)
 
+		if self.cost_center:
+			self.material_transfer_series	= frappe.db.get_value("Cost Center", 'Jeddah - SAM', "material_transfer_series")
+
+	# def before_insert(self):
+		# frappe.msgprint("hi")
+		if self.cost_center:
+			self.material_transfer_series	= frappe.db.get_value("Cost Center", 'Jeddah - SAM', "material_transfer_series")
+
 	def on_submit(self):
 
 		if self.material_transfer_type == "Send":

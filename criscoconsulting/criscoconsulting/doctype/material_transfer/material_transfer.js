@@ -46,7 +46,7 @@ frappe.ui.form.on('Material Transfer', {
 
 	},
 	refresh: function(frm) {
-		if(!frm.doc.docstatus) {
+		if(5==6) {
 			frm.add_custom_button(__('Make Material Request'), function() {
 				frappe.model.with_doctype('Material Request', function() {
 					var mr = frappe.model.get_new_doc('Material Request');

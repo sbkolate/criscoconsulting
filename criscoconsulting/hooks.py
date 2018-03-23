@@ -94,7 +94,12 @@ doc_events = {
 	"Material Request": {
 		"validate": "criscoconsulting.custom_method.material_request_data"
 		
-	}
+	},
+    "Material Transfer": {
+        "after_insert": "criscoconsulting.custom_method.add_to_on_material_transfer",
+        "validate": "criscoconsulting.custom_method.update_material_request_data"
+        
+    }
 }
 
 # Scheduled Tasks
