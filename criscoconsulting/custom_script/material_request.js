@@ -28,7 +28,9 @@ cur_frm.cscript.make_material_transfer_custom = function(frm) {
 }
 
 cur_frm.cscript.custom_refresh = function() {
+	if(frm.doc.material_request_type=="Material Transfer") {
 	$('.btn-group[data-label="Make"]').hide();
+	}
 }
 
 
