@@ -50,7 +50,7 @@ def execute(filters=None):
 
 
 
-		new_data.append(['i[0]',i[1],i2,i3,i[4],i5,i6,i[7],i8,i9,i10])
+		new_data.append([i[0],i[1],i2,i3,i[4],i5,i6,i[7],i8,i9,i10])
 	
 
 	stock=new_data
