@@ -11,47 +11,47 @@ def execute(filters=None):
 	columns = get_columns()
 	stock = get_total_stock(filters)
 	new_data=[]
-	for i in stock:
-		# print("\n",i[3])
-		i2=0
-		i3=0
-		i6=0
-		i5=0
-		i9=0
-		i8=0
-		if i[3] == None:
-			i3=0
+	for item in stock:
+		stock_riyadh=0
+		valuation_rate_riyadh=0
+		valuation_rate_mak=0
+		stock_mak=0
+		valuation_rate_mj=0
+		stock_mj=0
+		if item[3] == None:
+			valuation_rate_riyadh=0
 		else:
-			i3=i[3]
-		if i[3] == None:
-			i2=0
+			valuation_rate_riyadh=item[3]
+		if item[3] == None:
+			stock_riyadh=0
 		else:
-			i2=i[3]
+			stock_riyadh=item[3]
 
-		if i[6] == None:
-			i6=0
+		if item[6] == None:
+			valuation_rate_mak=0
 		else:
-			i6=i[6]
-		if i[5] == None:
-			i5=0
+			valuation_rate_mak=item[6]
+		if item[5] == None:
+			stock_mak=0
 		else:
-			i5=i[5]
+			stock_mak=item[5]
 
-		if i[9] == None:
-			i9=0
+		if item[9] == None:
+			valuation_rate_mj=0
 		else:
-			i9=i[9]
-		if i[8] == None:
-			i8=0
+			valuation_rate_mj=item[9]
+		if item[8] == None:
+			stock_mj=0
 		else:
-			i8=i[8]
+			stock_mj=item[8]
 
-		i10 = i2+i5+i8
+		total_qty = stock_riyadh+stock_mak+stock_mj
 
-
-
-		new_data.append([i[0],i[1],i2,i3,i[4],i5,i6,i[7],i8,i9,i10])
-	
+		new_data.append([item[0],
+			item[1],stock_riyadh,valuation_rate_riyadh,
+			item[4],stock_mak,valuation_rate_mak,
+			item[7],stock_mj,valuation_rate_mj,
+			total_qty])
 
 	stock=new_data
 	return columns, stock
@@ -76,8 +76,7 @@ def get_columns():
 	return columns
 
 def get_total_stock(filters):
-	# frappe.db.sql(""" UPDATE tabBin SET actual_qty = 0 WHERE actual_qty=''""")
-	# frappe.db.sql(""" UPDATE tabBin SET actual_qty = 0 WHERE actual_qty=''""")
+	
 	conditions = ""
 	columns = ""
 
