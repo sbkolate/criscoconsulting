@@ -10,22 +10,32 @@ def execute(filters=None):
 	validate_filters(filters)
 	columns = get_columns()
 	stock = get_total_stock(filters)
+	new_data=[]
+	for i in stock:
+		# print("\n",i[3])
+		new_data.append([i[0],i[1],i[2],i[3],i[4],i[5],i[6],i[7],i[8],i[9],i[10]])
+	
+	new_list = []
 
-	return columns, stock
+	for i in new_data:
+		new_list.append([i[0],i[1],i[2],i[3],i[4],i[5],i[6],i[7],i[8],i[9],i[10]])
+
+	stock=new_list
+	return columns, new_data
 
 def get_columns():
 	columns = [
 		_("Item Code") + ":Link/Item:150",
 		("Main - Riyadh") + ":Link/Item:150",
-		_("Stock-Riyadh") + ":Data:120",
-		("Valuation Rate") + ":Data:120",
+		_("Stock-Riyadh") + ":Float:120",
+		("Valuation Rate") + ":Float:120",
 		_("Main-Al-Khobar - SAM") + ":Data:150",
-		_("Stock-MAK") + ":Data:120",
-		("Valuation Rate") + ":Data:120",
+		_("Stock-MAK") + ":Float:120",
+		("Valuation Rate") + ":Float:120",
 		_("Main -Jeddah - SAM") + ":Data:150",
-		_("Stock-MJ1") + ":Data:120",
-		("Valuation Rate") + ":Data:120",
-		_("Total quantity") + ":Data:120",
+		_("Stock-MJ1") + ":Float:120",
+		("Valuation Rate") + ":Float:120",
+		_("Total QTY") + ":Float:120",
 
 
 	]
@@ -33,6 +43,8 @@ def get_columns():
 	return columns
 
 def get_total_stock(filters):
+	# frappe.db.sql(""" UPDATE tabBin SET actual_qty = 0 WHERE actual_qty=''""")
+	# frappe.db.sql(""" UPDATE tabBin SET actual_qty = 0 WHERE actual_qty=''""")
 	conditions = ""
 	columns = ""
 
@@ -44,18 +56,20 @@ def get_total_stock(filters):
 		columns += " warehouse.company, '' as warehouse"
 
 	return frappe.db.sql("""select
-			tb.item_code,'Main - Riyadh - SAM',
+			tb.item_code,'Main-Riyadh - SAM',
 			CASE
 			    WHEN 1=1
 			    THEN (select b.actual_qty
-			    	from tabBin b where b.warehouse = 'Main - Riyadh - SAM' 
+			    	from tabBin b 
+			    	where b.warehouse = 'Main-Riyadh - SAM' 
 			    	and b.item_code=tb.item_code limit 1)
 			    ELSE 0
 			END as act_w1_r1,
 			CASE
 			    WHEN 1=1
 			    THEN (select b.valuation_rate
-			    	from tabBin b where b.warehouse = 'Main - Riyadh - SAM' 
+			    	from tabBin b 
+			    	where b.warehouse = 'Main-Riyadh - SAM' 
 			    	and b.item_code=tb.item_code limit 1)
 			    ELSE 0
 			END as act_w20,
@@ -63,39 +77,47 @@ def get_total_stock(filters):
 			CASE
 			    WHEN 1=1
 			    THEN (select b.actual_qty 
-			    	from tabBin b where b.warehouse = 'Main-Al-Khobar - SAM' 
+			    	from tabBin b 
+			    	where b.warehouse = 'Main-Al-Khobar - SAM' 
 			    	and b.item_code=tb.item_code limit 1)
 			    ELSE 0
 			END as act_w1,
 			CASE
 			    WHEN 1=1
 			    THEN (select b.valuation_rate
-			    	from tabBin b where b.warehouse = 'Main-Al-Khobar - SAM' 
+			    	from tabBin b 
+			    	where b.warehouse = 'Main-Al-Khobar - SAM' 
 			    	and b.item_code=tb.item_code limit 1)
 			    ELSE 0
 			END as act_w21,
-			'Main -Jeddah - SAM',
+			'Main-Jeddah - SAM',
 			CASE
 			    WHEN 1=1
 			    THEN (select b.actual_qty 
-			    	from tabBin b where b.warehouse = 'Main -Jeddah - SAM' 
+			    	from tabBin b where b.warehouse = 'Main-Jeddah - SAM' 
 			    	and b.item_code=tb.item_code limit 1)
 			    ELSE 0
 			END as act_w14,
 			CASE
 			    WHEN 1=1
 			    THEN (select b.valuation_rate
-			    	from tabBin b where b.warehouse = 'Main -Jeddah - SAM' 
+			    	from tabBin b 
+			    	where b.warehouse = 'Main-Jeddah - SAM' 
 			    	and b.item_code=tb.item_code limit 1)
 			    ELSE 0
 			END as act_w22,
 			CASE
 			    WHEN 1=1
 			    THEN (select sum(b.actual_qty)
-			    	from tabBin b)
+			    	from tabBin b 
+			    	where b.item_code=tb.item_code
+			    	and (b.warehouse = 'Main-Al-Khobar - SAM' 
+			    	OR b.warehouse = 'Main-Riyadh - SAM' 
+			    	or b.warehouse = 'Main-Jeddah - SAM'))
 			    ELSE 0
 			END as act_w11
 			from tabBin tb group by tb.item_code""")
+
 
 def validate_filters(filters):
 	pass
