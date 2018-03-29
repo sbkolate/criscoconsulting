@@ -44,18 +44,18 @@ def get_total_stock(filters):
 		columns += " warehouse.company, '' as warehouse"
 
 	return frappe.db.sql("""select
-			tb.item_code,'Main - Riyadh - SAM',
+			tb.item_code,'Main-Riyadh - SAM',
 			CASE
 			    WHEN 1=1
 			    THEN (select b.actual_qty
-			    	from tabBin b where b.warehouse = 'Main - Riyadh - SAM' 
+			    	from tabBin b where b.warehouse = 'Main-Riyadh - SAM' 
 			    	and b.item_code=tb.item_code limit 1)
 			    ELSE 0
 			END as act_w1_r1,
 			CASE
 			    WHEN 1=1
 			    THEN (select b.valuation_rate
-			    	from tabBin b where b.warehouse = 'Main - Riyadh - SAM' 
+			    	from tabBin b where b.warehouse = 'Main-Riyadh - SAM' 
 			    	and b.item_code=tb.item_code limit 1)
 			    ELSE 0
 			END as act_w20,
