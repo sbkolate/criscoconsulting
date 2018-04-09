@@ -12,7 +12,6 @@ from erpnext.stock.utils import get_incoming_rate
 from erpnext.stock.stock_ledger import get_previous_sle, NegativeStockError
 from erpnext.stock.get_item_details import get_bin_details, get_default_cost_center, get_conversion_factor
 from erpnext.stock.doctype.batch.batch import get_batch_no, set_batch_nos
-from erpnext.manufacturing.doctype.bom.bom import validate_bom_no
 import json
 from frappe.model.mapper import get_mapped_doc
 
@@ -38,6 +37,8 @@ class MaterialTransfer(StockController):
 			item.update(get_bin_details(item.item_code, item.s_warehouse))
 
 	def validate(self):
+		print(self.docstatus)
+		print(self.material_request)
 		self.pro_doc = frappe._dict()
 		if self.production_order:
 			self.pro_doc = frappe.get_doc('Production Order', self.production_order)
@@ -69,14 +70,27 @@ class MaterialTransfer(StockController):
 		if self.cost_center:
 			self.material_transfer_series	= frappe.db.get_value("Cost Center", 'Jeddah - SAM', "material_transfer_series")
 
-
+	def make_batches(self, warehouse_field):
+		'''Create batches if required. Called before submit'''
+		for d in self.items:
+			if d.get(warehouse_field) and not d.batch_no:
+				has_batch_no, create_new_batch = frappe.db.get_value('Item', d.item_code, ['has_batch_no', 'create_new_batch'])
+				if has_batch_no and create_new_batch:
+					d.batch_no = frappe.get_doc(dict(
+						doctype='Batch',
+						item=d.item_code,
+						supplier=getattr(self, 'supplier', None),
+						reference_doctype=self.doctype,
+						reference_name=self.name)).insert().name
 	def before_insert(self):
 		# frappe.msgprint("hi")
 		if self.cost_center:
 			self.material_transfer_series	= frappe.db.get_value("Cost Center", 'Jeddah - SAM', "material_transfer_series")
 
 	def on_submit(self):
-
+		print("\n\n\n\n\n")
+		print(self.docstatus)
+		print(self.material_request)
 		if self.material_transfer_type == "Send":
 			if self.mt_status=="":
 				self.mt_status = "In Transit"
@@ -102,7 +116,7 @@ class MaterialTransfer(StockController):
 			if self.reference_of_send_entry:
 				frappe.db.set_value("Material Transfer", self.reference_of_send_entry, "mt_status","Rejected")
 				self.mt_status = ""
-
+	
 	def validate_purpose(self):
 		valid_purposes = ["Material Issue", "Material Receipt", "Material Transfer", "Material Transfer for Manufacture",
 			"Manufacture", "Repack", "Subcontract"]
@@ -918,6 +932,7 @@ def make_stock_entry_custom(source_name, target_doc=None):
 		target.basic_rate = obj.rate
 		target.transfer_qty = qty
 		target.conversion_factor = 1
+		
 
 		if source_parent.material_request_type == "Material Transfer":
 			target.t_warehouse = obj.warehouse
@@ -929,6 +944,10 @@ def make_stock_entry_custom(source_name, target_doc=None):
 			target.s_warehouse = obj.warehouse
 
 	def set_missing_values(source, target):
+		print("\n\n\n\n",source.docstatus)
+		source.docstatus = "Submitted"
+		print("\n\n\n\n",target.docstatus)
+		print(target.material_request)
 		target.purpose = source.material_request_type
 		target.from_warehouse = source.for_warehouse
 		target.receiver_warehouse = source.target_warehouse

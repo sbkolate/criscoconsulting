@@ -23,8 +23,13 @@ def update_material_request_data(self,doc):
 		doc_details += i.name+" - "+i.material_transfer_type+" \n"
 	
 	frappe.db.set_value("Material Request", self.material_request, 'doc_details', doc_details)
-	# self.doc_details=doc_details
-	# add_to_on_material_transfer(self,doc)
+	if self.material_transfer_type == "Send":
+		frappe.db.set_value("Material Request", self.material_request,"status","In Process")
+	else:
+		frappe.db.set_value("Material Request", self.material_request,"status","Transferred")
+
+	# self.per_ordered=1
+
 
 def add_to_on_material_transfer(self,doc):
         todo = frappe.new_doc("ToDo")

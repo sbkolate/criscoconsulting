@@ -102,6 +102,7 @@ frappe.ui.form.on("Material Transfer", "refresh", function(frm, cdt, cdn) {
 					mr.material_transfer_type = "Receive"
 					mr.reference_of_send_entry = frm.doc.name
 					mr.receiver = frm.doc.receiver
+					mr.material_request = frm.doc.material_request
 					mr.from_warehouse = "Transit - SAM - DP"
 					mr.receiver_warehouse = frm.doc.receiver_warehouse
 
