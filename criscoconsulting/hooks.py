@@ -97,7 +97,7 @@ doc_events = {
 	},
     "Material Transfer": {
         "after_insert": "criscoconsulting.custom_method.add_to_on_material_transfer",
-        "validate": "criscoconsulting.custom_method.update_material_request_data"
+        "on_submit": "criscoconsulting.custom_method.update_material_request_data"
         
     }
 }
